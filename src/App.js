@@ -8,32 +8,19 @@ export default function App() {
       { id: 4, name: "Mark" },
       { id: 5, name: "Meluin" },
     ]),
-    [add, setAdd] = useState({}),
-    [edit, setEdit] = useState({});
+    [user, setUser] = useState({});
 
   // Delete Function
-  const deleteFxn = (_id) => {
-    const newUsers = users.filter(({ id }) => id !== _id);
-    setUsers(newUsers);
-  };
-
-  // Create Function
-  const creChanger = (data) => {
-    setAdd({ id: users.length + 1, name: data.value });
-  };
-
-  const createList = () => setUsers([...users, add]);
+  const deleteFxn = (_id) => setUsers(users.filter(({ id }) => id !== _id));
 
   // Edit Function
-  const editBtn = (user) => setEdit(user);
-
-  const ediChanger = (data) => setEdit({ id: edit.id, name: data.value });
-
-  const updateList = () => {
-    const user = users.find(({ id }) => id === edit.id);
-    user.name = edit.name;
-    setUsers([...users]);
+  const activeUser = (_id) => setUser(users.find(({ id }) => id === _id));
+  const updateUsers = (_user) => {
+    setUsers([...users.filter(({ id }) => id !== _user.id), _user]);
+    clearUser();
   };
+
+  const clearUser = () => setUser({ id: users.length + 1, name: "" });
 
   return (
     <div>
@@ -48,8 +35,7 @@ export default function App() {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => {
-              const { id, name } = user;
+            {users.map(({ id, name }) => {
               return (
                 <tr>
                   <td>{id}</td>
@@ -58,7 +44,7 @@ export default function App() {
                     <button
                       type="button"
                       title="Edit"
-                      onClick={() => editBtn(user)}
+                      onClick={() => activeUser(id)}
                     >
                       Edit
                     </button>
@@ -78,35 +64,22 @@ export default function App() {
       </div>
       <hr />
       <div>
-        <h3>Create Form</h3>
+        <h3>User Form</h3>
         <form>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              onChange={(e) => creChanger(e.target)}
-            />
-          </label>
-          <button type="button" onClick={() => createList()}>
-            Submit
+          <button type="button" onClick={clearUser}>
+            Create New
           </button>
-        </form>
-      </div>
-      <hr />
-      <div>
-        <h3>Update Form</h3>
-        <form>
+          <br />
           <label>
             Name:
             <input
               type="text"
               name="name"
-              value={edit.name}
-              onChange={(e) => ediChanger(e.target)}
+              value={user.name}
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
             />
           </label>
-          <button type="button" onClick={() => updateList()}>
+          <button type="button" onClick={() => updateUsers(user)}>
             Submit
           </button>
         </form>
